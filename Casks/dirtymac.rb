@@ -7,7 +7,7 @@
 
 cask "dirtymac" do
  version "1.0.0"
- sha256 "REPLACE_WITH_SHA256_FROM_RELEASE"
+ sha256 "0f5dcc43b378cc938097ee5e2e319f1126acd46c797720e015bc45aaf60d6d72"
 
  url "https://github.com/erenmalkoc/dirtymac/releases/download/v#{version}/dirtymac-#{version}.dmg"
  name "dirtymac"
