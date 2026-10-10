@@ -16,5 +16,7 @@ cask "dirtymac" do
 
   app "dirtymac.app"
 
+  uninstall quit: "tech.erenium.dirtymac"
+
   zap trash: "~/Library/Preferences/tech.erenium.dirtymac.plist"
 end
