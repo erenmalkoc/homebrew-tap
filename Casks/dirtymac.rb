@@ -18,5 +18,6 @@ cask "dirtymac" do
 
   uninstall quit: "tech.erenium.dirtymac"
 
-  zap trash: "~/Library/Preferences/tech.erenium.dirtymac.plist"
+  zap login_item: "dirtymac",
+      trash:      "~/Library/Preferences/tech.erenium.dirtymac.plist"
 end

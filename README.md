@@ -34,7 +34,7 @@ the full name trusts the cask and upgrades it.
 brew uninstall --cask dirtymac
 ```
 
-Add `--zap` to also delete its preferences.
+Add `--zap` to also delete its preferences and remove its login item.
 
 ## Trust errors
 
