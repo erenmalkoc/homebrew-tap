@@ -1,0 +1,62 @@
+# Based on the tests workflow that `brew tap-new` generates (Homebrew 7.0.9),
+# trimmed to this cask-only tap and extended with an online audit and an
+# install smoke test of the dirtymac cask.
+name: brew test-bot
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash -xeuo pipefail {0}
+
+jobs:
+  test-bot:
+    runs-on: macos-26
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@e99025eb970cfa124b8284a35463d87426917478 # 2026.09.28.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Homebrew Bundler RubyGems
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-${{ runner.arch }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-${{ runner.arch }}-rubygems-
+
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      # brew style (RuboCop, actionlint), brew readall and brew audit --tap
+      - run: brew test-bot --only-tap-syntax
+
+      # Livecheck version, minimum macOS against the app's Info.plist, URL
+      # reachability. No --new: that is only for new homebrew/cask submissions.
+      - name: Audit dirtymac online
+        run: brew audit --cask --online --strict erenmalkoc/tap/dirtymac
+
+      # Install from the release DMG, check that the bundle id (used by
+      # `uninstall quit:` and `zap`) and the version match the cask, then
+      # uninstall. No --zap: removing the login item needs Automation consent.
+      - name: Install and uninstall dirtymac
+        run: |
+          brew install --cask erenmalkoc/tap/dirtymac
+          plist=/Applications/dirtymac.app/Contents/Info.plist
+          test "$(plutil -extract CFBundleIdentifier raw -o - "$plist")" = tech.erenium.dirtymac
+          version="$(brew list --cask --versions dirtymac | cut -d ' ' -f 2)"
+          test "$(plutil -extract CFBundleShortVersionString raw -o - "$plist")" = "$version"
+          brew uninstall --cask erenmalkoc/tap/dirtymac
+          test ! -e /Applications/dirtymac.app
