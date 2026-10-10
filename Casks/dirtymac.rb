@@ -16,7 +16,5 @@ cask "dirtymac" do
 
   app "dirtymac.app"
 
-  zap trash: [
-    "~/Library/Preferences/tech.erenium.dirtymac.plist",
-  ]
+  zap trash: "~/Library/Preferences/tech.erenium.dirtymac.plist"
 end
