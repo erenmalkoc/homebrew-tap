@@ -28,6 +28,12 @@ If you installed dirtymac before Homebrew 6.0 and have not trusted it since,
 a plain `brew upgrade` skips it without saying so. Run the command above once:
 the full name trusts the cask and upgrades it.
 
+Homebrew looks for new versions in this tap once a day at most, unless the
+command names the tap. Right after a release, a plain `brew upgrade` or
+`brew upgrade --cask dirtymac` can therefore answer that the latest version is
+already installed. The full name above checks again when the last check is
+more than five minutes old. Running `brew update` first works too.
+
 ## Uninstall
 
 ```bash
